@@ -1,0 +1,21 @@
+- hosts: all
+  become: yes
+  become_user: root
+  become_method: sudo
+  vars:
+    username: "centos"
+    repo_rpm: "centos-release-openstack-stein"
+    allinone: true
+    epel_repo: false
+    update: false
+  roles:
+    - role: base
+      tags: ["base"]
+    - role: packstack
+      tags: ["packstack"]
+    - role: dlrn
+      tags: ["dlrn"]
+    - role: weirdo
+      tags: ["weirdo"]
+    - role: okd
+      tags: ["okd"]

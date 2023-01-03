@@ -1,0 +1,71 @@
+---
+- name: Ensure EPEL repos are absent
+  yum:
+    name: "epel-release"
+    state: absent
+
+- name: Update system
+  yum:
+    name: '*'
+    state: latest
+  when: "update is defined and update == true"
+
+- name: Install packages
+  yum:
+    name: "{{ packages }}"
+    state: present
+
+- name: Install tox
+  pip:
+    name: tox
+
+- name: Clone weirdo project
+  git:
+    repo: "https://github.com/rdo-infra/weirdo.git"
+    dest: "{{ ansible_user_dir }}/weirdo"
+
+- name: Create hosts file
+  template:
+    src: hosts
+    dest:  "{{ ansible_user_dir }}/weirdo/hosts"
+
+- name: Check if SSH keypair is present
+  stat:
+    path: /root/.ssh/id_rsa
+  register: ssh_keypair
+
+- name: Generate SSH keypair
+  shell: ssh-keygen -b 2048 -t rsa -f /root/.ssh/id_rsa -q -N ""
+  args:
+    creates: /root/.ssh/id_rsa
+  when: ssh_keypair.stat.islnk is not defined
+
+- name: Configure ssh configuration
+  shell: cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys
+  become: yes
+
+- name: Ensure contentdir var equals to centos
+  shell: /usr/bin/uname -m | grep -q 'x86_64' && echo 'centos' >/etc/yum/vars/contentdir || echo 'altarch' > /etc/yum/vars/contentdir
+  become: yes
+
+# TODO: tmate is not yet present in CentOS8 repo
+#- name: Start tmate session when creating a root bash env
+#  lineinfile:
+#    path: /root/.bash_profile
+#    line: tmate
+#    state: present
+
+- name: Edit PATH
+  lineinfile:
+    path: /root/.bash_profile
+    regexp: '^PATH='
+    line: PATH=$PATH:$HOME/bin:/usr/local/bin
+
+- name: Upload replay_weirdo_job.sh script
+  copy:
+    src: files/replay_weirdo_job.sh
+    dest:  "/root/replay_weirdo_job.sh"
+    owner: root
+    group: root
+    mode: '0744'
+  become: yes

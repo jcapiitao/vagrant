@@ -1,0 +1,47 @@
+- name: Install EPEL repos
+  yum:
+    name: "epel-release"
+    state: present
+
+- name: Disable EPEL repos
+  become: true
+  changed_when: false
+  args:
+    warn: false
+  shell: |
+    dnf config-manager --disable epel*
+
+- set_fact:
+    centos_releasever: "{{ ansible_distribution_major_version }}"
+
+- name: Install repositories
+  when:
+    - repos['centos' + centos_releasever] is defined
+    - repos['centos' + centos_releasever] != []
+  yum_repository:
+    name: "{{ item.name }}"
+    description: "{{ item.description }}"
+    baseurl: "{{ item.baseurl }}"
+  loop: "{{ repos['centos' + centos_releasever] }}"
+
+- name: Install utilities
+  package:
+    name: "{{ utilities }}"
+
+#- name: Install a pkg from EPEL repos
+#  become: true
+#  changed_when: false
+#  args:
+#    warn: false
+#  shell: |
+#    dnf install --enablerepo=epel pkg -y
+
+- name: Update system
+  package:
+    name: "*"
+    state: "latest"
+    update_cache: "yes"
+  when: "update is defined and update == true"
+# notify:
+#   - reboot vm
+#   - waiting for server

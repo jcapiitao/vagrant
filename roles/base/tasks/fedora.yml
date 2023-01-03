@@ -1,0 +1,7 @@
+- name: Update system
+  package:
+    name: "*"
+    state: "latest"
+    update_cache: "yes"
+  when: "update is defined and update == true"
+#config.vm.boot_timeout

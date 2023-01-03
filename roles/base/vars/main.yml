@@ -1,0 +1,17 @@
+---
+# vars file for rdo
+utilities:
+  - "sysstat"
+  - "git"
+  - "wget"
+  - "vim"
+  - "vim-enhanced"
+  - "jq"
+  - "tmux"
+
+repos:
+  centos8: []
+    #    - name: BaseOS
+    #      description: "CentOS-8 - Base"
+    #      baseurl: "http://mirror.regionone.rdo-cloud.rdoproject.org/centos/8/BaseOS/x86_64/os/"
+  centos7: []

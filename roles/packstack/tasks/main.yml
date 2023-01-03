@@ -1,0 +1,76 @@
+---
+- name: Ensure host has enough RAM
+  fail:
+    msg: The system should have more than 16GB of RAM.
+  when: ansible_memtotal_mb < 16000
+
+- name: Update system
+  package:
+    name: "*"
+    state: "latest"
+    update_cache: "yes"
+
+- name: Install network-scripts
+  yum:
+    name: network-scripts
+    state: present
+
+- name: Make sure firewalld is not running and disabled
+  ansible.builtin.systemd:
+    state: stopped
+    enabled: no
+    name: firewalld
+  ignore_errors: true
+
+- name: Make sure NetworkManager is not running and disabled
+  ansible.builtin.systemd:
+    state: started
+    enabled: yes
+    name: NetworkManager
+  ignore_errors: true
+
+- name: Make sure network is running and enabled
+  ansible.builtin.systemd:
+    state: stopped
+    enabled: no
+    name: network
+  ignore_errors: true
+
+- name: Enable the powertools repository
+  become: true
+  changed_when: false
+  args:
+    warn: false
+  shell: |
+    dnf config-manager --enable powertools
+  when:
+    - ansible_distribution_major_version is version(8, '==')
+
+- name: Enable the crb repository
+  become: true
+  changed_when: false
+  args:
+    warn: false
+  shell: |
+    dnf config-manager --enable crb
+  when:
+    - ansible_distribution_major_version is version(9, '==')
+
+- name: Install Openstack
+  become: true
+  yum:
+    name: "centos-release-openstack-zed"
+    state: present
+
+- name: Update system
+  package:
+    name: "*"
+    state: "latest"
+    update_cache: "yes"
+
+- name: install packstack
+  yum:
+    name: openstack-packstack
+    state: "latest"
+    update_cache: "yes"
+  when: "allinone is defined and allinone == true"

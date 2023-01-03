@@ -1,0 +1,9 @@
+---
+packages:
+  - git
+  - python3-setuptools
+  - python3-devel
+  - python3-pip
+  - libffi-devel
+  - openssl-devel
+  - '@Development Tools'

@@ -1,0 +1,8 @@
+---
+- name: Config CentOS system
+  import_tasks: centos.yml
+  when: ansible_distribution == 'CentOS'
+
+- name: Config Fedora system
+  import_tasks: fedora.yml
+  when: ansible_distribution == 'Fedora'

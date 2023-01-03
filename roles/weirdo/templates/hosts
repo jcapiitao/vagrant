@@ -1,0 +1,3 @@
+localhost ansible_connection=ssh ansible_user=root  ansible_python_interpreter=/usr/bin/python{{ '3' if ansible_distribution_major_version|int >= 8 else '2' }}
+[openstack_nodes]
+localhost log_destination=/var/log/weirdo ansible_connection=ssh ansible_user=root
