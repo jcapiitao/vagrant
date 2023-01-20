@@ -38,16 +38,10 @@ servers=[
     :flavor => "ci.m1.large",
   },
   {
-    :hostname => "f34",
-    :image => "Fedora-Cloud-Base-34",
+    :hostname => "f37",
+    :image => "Fedora-Cloud-Base-37-latest",
     :username => "fedora",
-    :flavor => "ci.m1.large",
-  },
-  {
-    :hostname => "f35",
-    :image => "Fedora-Cloud-Base-35",
-    :username => "fedora",
-    :flavor => "ci.m1.large",
+    :flavor => "ci.m1.xlarge",
   }
 ]
 
