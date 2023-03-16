@@ -54,7 +54,7 @@ Vagrant.configure(2) do |config|
             node.vm.network "private_network", ip: machine[:ip]
             node.vm.provider :openstack do |os, override|
                 override.ssh.username = machine[:username]
-                override.ssh.private_key_path = '~/.ssh/id_rsa'
+                override.ssh.private_key_path = '~/.ssh/id_ed25519'
                 override.nfs.functional = false
 
                 # Specify OpenStack authentication information
